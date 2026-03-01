@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: humy-embutidos-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: humy_embutidos
+      - key: ADMIN_USERNAME
+        value: EmbutidosHumy
+      - key: ADMIN_PASSWORD
+        sync: false
