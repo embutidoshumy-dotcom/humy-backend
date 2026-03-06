@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from dotenv import load_dotenv
@@ -336,7 +337,7 @@ async def upload_receipt(receipt: ReceiptUpload):
         "image": receipt.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
     receipt_url = f"{base_url}/api/receipts/{receipt_id}"
     return ReceiptResponse(receipt_id=receipt_id, receipt_url=receipt_url)
 
@@ -403,7 +404,7 @@ async def create_order(order_input: OrderCreate):
             "image": order_input.receipt_image,
             "timestamp": datetime.utcnow()
         })
-        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
         receipt_url = f"{base_url}/api/receipts/{receipt_id}"
     
     # Delivery method text
@@ -691,7 +692,7 @@ async def admin_upload_image(image_data: dict, admin: str = Depends(verify_admin
         "image": image_data.get("image"),
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     return {"image_url": image_url}
 
@@ -743,7 +744,7 @@ async def admin_create_promo(promo_data: PromoCreate, admin: str = Depends(verif
         "image": promo_data.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     
     # Create new promo
@@ -891,7 +892,7 @@ async def admin_create_product(product: ProductCreate, admin: str = Depends(veri
         "image": product.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     
     prod_id = f"prod_{str(uuid.uuid4())[:8]}"
@@ -921,7 +922,7 @@ async def admin_update_product(product_id: str, data: dict, admin: str = Depends
             "image": data["image"],
             "timestamp": datetime.utcnow()
         })
-        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://embutidos-humy.preview.emergentagent.com')
+        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
         update_data["image_url"] = f"{base_url}/api/images/{image_id}"
         update_data["image_base64"] = data["image"]
     
@@ -949,6 +950,233 @@ async def admin_delete_product(product_id: str, admin: str = Depends(verify_admi
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return {"message": "Producto eliminado"}
+
+# ============================================
+# LANDING PAGE / WEBSITE CONFIGURATION
+# ============================================
+
+class SocialButton(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str  # WhatsApp, Instagram, Facebook, etc.
+    icon: str  # Nombre del icono (whatsapp, instagram, facebook, map-marker, etc.)
+    url: str
+    color: str = "#333333"
+    active: bool = True
+    order: int = 0
+
+class PopupImage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    image_url: str
+    image_base64: Optional[str] = None
+    title: Optional[str] = None
+    link_url: Optional[str] = None
+    active: bool = True
+    created_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+
+class LandingConfig(BaseModel):
+    app_download_url: str = ""
+    app_download_text: str = "Descarga nuestra App"
+    hero_title: str = "Humy Embutidos"
+    hero_subtitle: str = "Los mejores embutidos de República Dominicana"
+    show_app_button: bool = True
+    social_buttons: List[SocialButton] = []
+    popup_images: List[PopupImage] = []
+
+# Default landing configuration
+DEFAULT_LANDING_CONFIG = {
+    "app_download_url": "https://play.google.com/store/apps/details?id=com.arzlmno.humyembutidos",
+    "app_download_text": "📲 Descarga nuestra App",
+    "hero_title": "Humy Embutidos",
+    "hero_subtitle": "Los mejores embutidos de República Dominicana",
+    "show_app_button": True,
+    "social_buttons": [
+        {
+            "id": "whatsapp",
+            "name": "WhatsApp",
+            "icon": "whatsapp",
+            "url": "https://wa.me/18299185606",
+            "color": "#25D366",
+            "active": True,
+            "order": 0
+        },
+        {
+            "id": "instagram",
+            "name": "Instagram",
+            "icon": "instagram",
+            "url": "https://www.instagram.com/embutidoshumy/",
+            "color": "#E4405F",
+            "active": True,
+            "order": 1
+        },
+        {
+            "id": "facebook",
+            "name": "Facebook",
+            "icon": "facebook",
+            "url": "https://www.facebook.com/profile.php?id=61572445319735",
+            "color": "#1877F2",
+            "active": True,
+            "order": 2
+        },
+        {
+            "id": "ubicacion",
+            "name": "Ubicación",
+            "icon": "map-marker",
+            "url": "https://maps.app.goo.gl/e8G8tVgrkxx9YPik6",
+            "color": "#EA4335",
+            "active": True,
+            "order": 3
+        }
+    ],
+    "popup_images": []
+}
+
+# Get landing page configuration (public)
+@api_router.get("/landing/config")
+async def get_landing_config():
+    config = await db.landing_config.find_one({"_id": "main"})
+    if not config:
+        # Initialize with defaults
+        default_config = {**DEFAULT_LANDING_CONFIG, "_id": "main"}
+        await db.landing_config.insert_one(default_config)
+        config = default_config
+    
+    # Remove MongoDB _id for response
+    if "_id" in config:
+        del config["_id"]
+    return config
+
+# Update landing page configuration (admin only)
+@api_router.put("/admin/landing/config")
+async def update_landing_config(config: LandingConfig, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    config_dict = config.dict()
+    config_dict["_id"] = "main"
+    
+    await db.landing_config.replace_one(
+        {"_id": "main"},
+        config_dict,
+        upsert=True
+    )
+    return {"message": "Configuración actualizada", "config": config.dict()}
+
+# Add/Update social button (admin only)
+@api_router.post("/admin/landing/social-button")
+async def add_social_button(button: SocialButton, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    config = await db.landing_config.find_one({"_id": "main"})
+    if not config:
+        config = {**DEFAULT_LANDING_CONFIG, "_id": "main"}
+    
+    buttons = config.get("social_buttons", [])
+    
+    # Check if button with same ID exists
+    existing_idx = next((i for i, b in enumerate(buttons) if b["id"] == button.id), None)
+    if existing_idx is not None:
+        buttons[existing_idx] = button.dict()
+    else:
+        buttons.append(button.dict())
+    
+    await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$set": {"social_buttons": buttons}},
+        upsert=True
+    )
+    return {"message": "Botón guardado", "button": button.dict()}
+
+# Delete social button (admin only)
+@api_router.delete("/admin/landing/social-button/{button_id}")
+async def delete_social_button(button_id: str, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    result = await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$pull": {"social_buttons": {"id": button_id}}}
+    )
+    return {"message": "Botón eliminado"}
+
+# Add popup image (admin only)
+@api_router.post("/admin/landing/popup")
+async def add_popup_image(popup: PopupImage, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    # Handle base64 image
+    if popup.image_base64 and not popup.image_url:
+        popup.image_url = popup.image_base64
+    
+    config = await db.landing_config.find_one({"_id": "main"})
+    if not config:
+        config = {**DEFAULT_LANDING_CONFIG, "_id": "main"}
+    
+    popups = config.get("popup_images", [])
+    popups.append(popup.dict())
+    
+    await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$set": {"popup_images": popups}},
+        upsert=True
+    )
+    return {"message": "Popup agregado", "popup": popup.dict()}
+
+# Update popup image (admin only)
+@api_router.put("/admin/landing/popup/{popup_id}")
+async def update_popup_image(popup_id: str, popup: PopupImage, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    config = await db.landing_config.find_one({"_id": "main"})
+    if not config:
+        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+    
+    popups = config.get("popup_images", [])
+    popup_idx = next((i for i, p in enumerate(popups) if p["id"] == popup_id), None)
+    
+    if popup_idx is None:
+        raise HTTPException(status_code=404, detail="Popup no encontrado")
+    
+    popup.id = popup_id
+    if popup.image_base64 and not popup.image_url:
+        popup.image_url = popup.image_base64
+    
+    popups[popup_idx] = popup.dict()
+    
+    await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$set": {"popup_images": popups}}
+    )
+    return {"message": "Popup actualizado", "popup": popup.dict()}
+
+# Delete popup image (admin only)
+@api_router.delete("/admin/landing/popup/{popup_id}")
+async def delete_popup_image(popup_id: str, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    result = await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$pull": {"popup_images": {"id": popup_id}}}
+    )
+    return {"message": "Popup eliminado"}
+
+# Toggle popup active status (admin only)
+@api_router.patch("/admin/landing/popup/{popup_id}/toggle")
+async def toggle_popup(popup_id: str, credentials: HTTPBasicCredentials = Depends(security)):
+    verify_admin(credentials)
+    
+    config = await db.landing_config.find_one({"_id": "main"})
+    if not config:
+        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+    
+    popups = config.get("popup_images", [])
+    for popup in popups:
+        if popup["id"] == popup_id:
+            popup["active"] = not popup.get("active", True)
+            break
+    
+    await db.landing_config.update_one(
+        {"_id": "main"},
+        {"$set": {"popup_images": popups}}
+    )
+    return {"message": "Estado del popup cambiado"}
 
 # Include the router in the main app
 app.include_router(api_router)
