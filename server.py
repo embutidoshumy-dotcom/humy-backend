@@ -61,7 +61,7 @@ DEFAULT_COMBOS = [
     {
         "id": "combo1",
         "name": "Super Combo 1",
-        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB Jamón Cocido, 1 LB Longaniza Fina",
+        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB JamÃ³n Cocido, 1 LB Longaniza Fina",
         "price": 660,
         "image_url": "https://customer-assets.emergentagent.com/job_d0ebc224-4e42-4a7d-b183-a128866ac01c/artifacts/wr5w0v5h_IMG-20260227-WA0021.jpg",
         "active": True
@@ -69,7 +69,7 @@ DEFAULT_COMBOS = [
     {
         "id": "combo2",
         "name": "Super Combo 2",
-        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB Jamón Cocido, 1 LB Queso Cheddar, 1 LB Salami Mallita",
+        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB JamÃ³n Cocido, 1 LB Queso Cheddar, 1 LB Salami Mallita",
         "price": 900,
         "image_url": "https://customer-assets.emergentagent.com/job_d0ebc224-4e42-4a7d-b183-a128866ac01c/artifacts/9zucrp2o_IMG-20260227-WA0020.jpg",
         "active": True
@@ -77,7 +77,7 @@ DEFAULT_COMBOS = [
     {
         "id": "combo3",
         "name": "Super Combo 3",
-        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB Jamón Picnic, 1 LB Queso Cheddar, 1 LB Salami Induveca, 1 LB Queso de Freír, 1 LB Longaniza Fina",
+        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB JamÃ³n Picnic, 1 LB Queso Cheddar, 1 LB Salami Induveca, 1 LB Queso de FreÃ­r, 1 LB Longaniza Fina",
         "price": 1290,
         "image_url": "https://customer-assets.emergentagent.com/job_d0ebc224-4e42-4a7d-b183-a128866ac01c/artifacts/xwfllsol_IMG-20260227-WA0023.jpg",
         "active": True
@@ -85,7 +85,7 @@ DEFAULT_COMBOS = [
     {
         "id": "combo4",
         "name": "Super Combo 4",
-        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB Jamón Picnic, 1 LB Queso Cheddar, 1 LB Salami Induveca, 1 LB Queso de Freír, 1 Cartón de Huevo",
+        "description": "2 LB Chuleta Ahumada, 1 LB Costilla Ahumada, 1 LB JamÃ³n Picnic, 1 LB Queso Cheddar, 1 LB Salami Induveca, 1 LB Queso de FreÃ­r, 1 CartÃ³n de Huevo",
         "price": 1290,
         "image_url": "https://customer-assets.emergentagent.com/job_d0ebc224-4e42-4a7d-b183-a128866ac01c/artifacts/yljz2eqn_IMG-20260227-WA0022.jpg",
         "active": True
@@ -285,7 +285,7 @@ async def get_store_settings():
     return {
         "products_enabled": settings.get("products_enabled", False),
         "store_open": settings.get("store_open", True),
-        "closed_message": settings.get("closed_message", "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el día lunes. Recuerda que buscamos mercancía el mismo día lunes y retornamos a las 3:00 PM.")
+        "closed_message": settings.get("closed_message", "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el dÃ­a lunes. Recuerda que buscamos mercancÃ­a el mismo dÃ­a lunes y retornamos a las 3:00 PM.")
     }
 
 @api_router.get("/categories")
@@ -336,7 +336,7 @@ async def upload_receipt(receipt: ReceiptUpload):
         "image": receipt.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
     receipt_url = f"{base_url}/api/receipts/{receipt_id}"
     return ReceiptResponse(receipt_id=receipt_id, receipt_url=receipt_url)
 
@@ -403,11 +403,11 @@ async def create_order(order_input: OrderCreate):
             "image": order_input.receipt_image,
             "timestamp": datetime.utcnow()
         })
-        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
         receipt_url = f"{base_url}/api/receipts/{receipt_id}"
     
     # Delivery method text
-    delivery_text = "🏪 Retiro en Local" if order_input.delivery_method == "retiro" else "🚴 Delivery"
+    delivery_text = "ðŸª Retiro en Local" if order_input.delivery_method == "retiro" else "ðŸš´ Delivery"
     
     # Create WhatsApp message
     message_lines = [
@@ -417,15 +417,15 @@ async def create_order(order_input: OrderCreate):
         "",
         "*CLIENTE:*",
         f"Nombre: {order_input.customer_name}",
-        f"Teléfono: {order_input.customer_phone}",
+        f"TelÃ©fono: {order_input.customer_phone}",
     ]
     
     # Only add location for delivery orders
     if order_input.delivery_method == "delivery":
-        message_lines.append(f"Ubicación: {order_input.location}")
+        message_lines.append(f"UbicaciÃ³n: {order_input.location}")
         if order_input.location_link:
             message_lines.append(f"")
-            message_lines.append(f"📍 *Ver ubicación en mapa:*")
+            message_lines.append(f"ðŸ“ *Ver ubicaciÃ³n en mapa:*")
             message_lines.append(f"{order_input.location_link}")
     
     message_lines.extend(["", "*PEDIDO:*"])
@@ -435,13 +435,13 @@ async def create_order(order_input: OrderCreate):
     message_lines.extend([
         "",
         f"*TOTAL: RD${total:,}*",
-        f"*Método de pago:* {payment_text}",
+        f"*MÃ©todo de pago:* {payment_text}",
     ])
     
     if receipt_url:
         message_lines.extend([
             "",
-            "📎 *Comprobante de pago:*",
+            "ðŸ“Ž *Comprobante de pago:*",
             receipt_url
         ])
     
@@ -529,6 +529,7 @@ async def admin_create_combo(combo: ComboCreate, admin: str = Depends(verify_adm
         "active": True
     }
     await db.combos.insert_one(new_combo)
+    new_combo.pop("_id", None)
     return new_combo
 
 @api_router.put("/admin/combos/{combo_id}")
@@ -691,7 +692,7 @@ async def admin_upload_image(image_data: dict, admin: str = Depends(verify_admin
         "image": image_data.get("image"),
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     return {"image_url": image_url}
 
@@ -743,7 +744,7 @@ async def admin_create_promo(promo_data: PromoCreate, admin: str = Depends(verif
         "image": promo_data.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     
     # Create new promo
@@ -759,14 +760,14 @@ async def admin_create_promo(promo_data: PromoCreate, admin: str = Depends(verif
     }
     await db.promos.insert_one(new_promo)
     
-    return {"message": "Promoción creada", "promo_id": promo_id}
+    return {"message": "PromociÃ³n creada", "promo_id": promo_id}
 
 @api_router.put("/admin/promo/{promo_id}/toggle")
 async def admin_toggle_promo(promo_id: str, admin: str = Depends(verify_admin)):
     """Toggle promo active status"""
     promo = await db.promos.find_one({"id": promo_id})
     if not promo:
-        raise HTTPException(status_code=404, detail="Promoción no encontrada")
+        raise HTTPException(status_code=404, detail="PromociÃ³n no encontrada")
     
     new_status = not promo.get("active", False)
     await db.promos.update_one({"id": promo_id}, {"$set": {"active": new_status}})
@@ -778,8 +779,8 @@ async def admin_delete_promo(promo_id: str, admin: str = Depends(verify_admin)):
     """Delete a promotion"""
     result = await db.promos.delete_one({"id": promo_id})
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Promoción no encontrada")
-    return {"message": "Promoción eliminada"}
+        raise HTTPException(status_code=404, detail="PromociÃ³n no encontrada")
+    return {"message": "PromociÃ³n eliminada"}
 
 # ============== PRODUCTS & CATEGORIES ADMIN ROUTES ==============
 
@@ -788,11 +789,11 @@ async def admin_get_store_settings(admin: str = Depends(verify_admin)):
     """Get store settings"""
     settings = await db.settings.find_one({"type": "store"})
     if not settings:
-        return {"products_enabled": False, "store_open": True, "closed_message": "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el día lunes. Recuerda que buscamos mercancía el mismo día lunes y retornamos a las 3:00 PM."}
+        return {"products_enabled": False, "store_open": True, "closed_message": "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el dÃ­a lunes. Recuerda que buscamos mercancÃ­a el mismo dÃ­a lunes y retornamos a las 3:00 PM."}
     return {
         "products_enabled": settings.get("products_enabled", False),
         "store_open": settings.get("store_open", True),
-        "closed_message": settings.get("closed_message", "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el día lunes. Recuerda que buscamos mercancía el mismo día lunes y retornamos a las 3:00 PM.")
+        "closed_message": settings.get("closed_message", "En este momento no contamos con inventario. Estamos anotando pedidos para entregar el dÃ­a lunes. Recuerda que buscamos mercancÃ­a el mismo dÃ­a lunes y retornamos a las 3:00 PM.")
     }
 
 @api_router.put("/admin/store-settings")
@@ -815,7 +816,7 @@ async def admin_update_store_settings(settings: dict, admin: str = Depends(verif
     # Get updated settings
     updated = await db.settings.find_one({"type": "store"})
     return {
-        "message": "Configuración actualizada",
+        "message": "ConfiguraciÃ³n actualizada",
         "products_enabled": updated.get("products_enabled", False),
         "store_open": updated.get("store_open", True),
         "closed_message": updated.get("closed_message", "")
@@ -841,6 +842,7 @@ async def admin_create_category(category: CategoryCreate, admin: str = Depends(v
         "active": True
     }
     await db.categories.insert_one(new_cat)
+    new_cat.pop("_id", None)
     return new_cat
 
 @api_router.put("/admin/categories/{category_id}")
@@ -852,7 +854,7 @@ async def admin_update_category(category_id: str, data: dict, admin: str = Depen
     
     result = await db.categories.update_one({"id": category_id}, {"$set": update_data})
     if result.modified_count == 0:
-        raise HTTPException(status_code=404, detail="Categoría no encontrada")
+        raise HTTPException(status_code=404, detail="CategorÃ­a no encontrada")
     
     updated = await db.categories.find_one({"id": category_id})
     if "_id" in updated:
@@ -864,10 +866,10 @@ async def admin_delete_category(category_id: str, admin: str = Depends(verify_ad
     """Delete a category and its products"""
     result = await db.categories.delete_one({"id": category_id})
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Categoría no encontrada")
+        raise HTTPException(status_code=404, detail="CategorÃ­a no encontrada")
     # Also delete products in this category
     await db.products.delete_many({"category_id": category_id})
-    return {"message": "Categoría eliminada"}
+    return {"message": "CategorÃ­a eliminada"}
 
 @api_router.get("/admin/products")
 async def admin_get_products(category_id: Optional[str] = None, admin: str = Depends(verify_admin)):
@@ -891,7 +893,7 @@ async def admin_create_product(product: ProductCreate, admin: str = Depends(veri
         "image": product.image,
         "timestamp": datetime.utcnow()
     })
-    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+    base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
     image_url = f"{base_url}/api/images/{image_id}"
     
     prod_id = f"prod_{str(uuid.uuid4())[:8]}"
@@ -906,6 +908,7 @@ async def admin_create_product(product: ProductCreate, admin: str = Depends(veri
         "active": True
     }
     await db.products.insert_one(new_product)
+    new_product.pop("_id", None)
     return new_product
 
 @api_router.put("/admin/products/{product_id}")
@@ -921,7 +924,7 @@ async def admin_update_product(product_id: str, data: dict, admin: str = Depends
             "image": data["image"],
             "timestamp": datetime.utcnow()
         })
-        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://humy-embutidos-2.preview.emergentagent.com')
+        base_url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://fcm-order-sync.preview.emergentagent.com')
         update_data["image_url"] = f"{base_url}/api/images/{image_id}"
         update_data["image_base64"] = data["image"]
     
@@ -976,7 +979,7 @@ class LandingConfig(BaseModel):
     app_download_url: str = ""
     app_download_text: str = "Descarga nuestra App"
     hero_title: str = "Humy Embutidos"
-    hero_subtitle: str = "Los mejores embutidos de República Dominicana"
+    hero_subtitle: str = "Los mejores embutidos de RepÃºblica Dominicana"
     show_app_button: bool = True
     social_buttons: List[SocialButton] = []
     popup_images: List[PopupImage] = []
@@ -984,9 +987,9 @@ class LandingConfig(BaseModel):
 # Default landing configuration
 DEFAULT_LANDING_CONFIG = {
     "app_download_url": "https://play.google.com/store/apps/details?id=com.arzlmno.humyembutidos",
-    "app_download_text": "📲 Descarga nuestra App",
+    "app_download_text": "ðŸ“² Descarga nuestra App",
     "hero_title": "Humy Embutidos",
-    "hero_subtitle": "Los mejores embutidos de República Dominicana",
+    "hero_subtitle": "Los mejores embutidos de RepÃºblica Dominicana",
     "show_app_button": True,
     "social_buttons": [
         {
@@ -1018,7 +1021,7 @@ DEFAULT_LANDING_CONFIG = {
         },
         {
             "id": "ubicacion",
-            "name": "Ubicación",
+            "name": "UbicaciÃ³n",
             "icon": "map-marker",
             "url": "https://maps.app.goo.gl/e8G8tVgrkxx9YPik6",
             "color": "#EA4335",
@@ -1057,7 +1060,7 @@ async def update_landing_config(config: LandingConfig, credentials: HTTPBasicCre
         config_dict,
         upsert=True
     )
-    return {"message": "Configuración actualizada", "config": config.dict()}
+    return {"message": "ConfiguraciÃ³n actualizada", "config": config.dict()}
 
 # Add/Update social button (admin only)
 @api_router.post("/admin/landing/social-button")
@@ -1082,7 +1085,7 @@ async def add_social_button(button: SocialButton, credentials: HTTPBasicCredenti
         {"$set": {"social_buttons": buttons}},
         upsert=True
     )
-    return {"message": "Botón guardado", "button": button.dict()}
+    return {"message": "BotÃ³n guardado", "button": button.dict()}
 
 # Delete social button (admin only)
 @api_router.delete("/admin/landing/social-button/{button_id}")
@@ -1093,7 +1096,7 @@ async def delete_social_button(button_id: str, credentials: HTTPBasicCredentials
         {"_id": "main"},
         {"$pull": {"social_buttons": {"id": button_id}}}
     )
-    return {"message": "Botón eliminado"}
+    return {"message": "BotÃ³n eliminado"}
 
 # Add popup image (admin only)
 @api_router.post("/admin/landing/popup")
@@ -1125,7 +1128,7 @@ async def update_popup_image(popup_id: str, popup: PopupImage, credentials: HTTP
     
     config = await db.landing_config.find_one({"_id": "main"})
     if not config:
-        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+        raise HTTPException(status_code=404, detail="ConfiguraciÃ³n no encontrada")
     
     popups = config.get("popup_images", [])
     popup_idx = next((i for i, p in enumerate(popups) if p["id"] == popup_id), None)
@@ -1163,7 +1166,7 @@ async def toggle_popup(popup_id: str, credentials: HTTPBasicCredentials = Depend
     
     config = await db.landing_config.find_one({"_id": "main"})
     if not config:
-        raise HTTPException(status_code=404, detail="Configuración no encontrada")
+        raise HTTPException(status_code=404, detail="ConfiguraciÃ³n no encontrada")
     
     popups = config.get("popup_images", [])
     for popup in popups:
@@ -1176,6 +1179,25 @@ async def toggle_popup(popup_id: str, credentials: HTTPBasicCredentials = Depend
         {"$set": {"popup_images": popups}}
     )
     return {"message": "Estado del popup cambiado"}
+
+# ===== VISIT COUNTER =====
+@api_router.post("/visits/track")
+async def track_visit():
+    """Increment visit counter and return current count"""
+    result = await db.site_stats.find_one_and_update(
+        {"_id": "visits"},
+        {"$inc": {"count": 1}},
+        upsert=True,
+        return_document=True
+    )
+    return {"count": result.get("count", 1)}
+
+@api_router.get("/visits/count")
+async def get_visit_count():
+    """Get current visit count without incrementing"""
+    stats = await db.site_stats.find_one({"_id": "visits"})
+    count = stats.get("count", 0) if stats else 0
+    return {"count": count}
 
 # Include the router in the main app
 app.include_router(api_router)
